@@ -7,4 +7,4 @@ To generate protobuf file, run protoc --python_out=. file_name.proto in the term
 ### Generating Protobuf files for .ino code:
 
 Use nanopb for .ino codes. 
-***tjk
+
