@@ -9,7 +9,7 @@ while True:
  try:
   count = count + 1    
   data_obj = data.Data()                   # Create an object for the class Data
-  ser = serial.Serial('/dev/ttyACM0', 9600)   
+  ser = serial.Serial('/dev/ttyACM0', 115200)   
   byte_string = ser.read_until(expected = b'\x00', size = 80)    # Read until zero-byte (de-limiting)
   cobs_decoded = cobs.decode(byte_string[:-1])           # Decode the cobs encoded byte string
   data_obj.ParseFromString(cobs_decoded)       # Decode cobs decoded byte string using Protobufs 
