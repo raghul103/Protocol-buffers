@@ -25,7 +25,7 @@ char user[3] = "r";
 
 void setup() {
  
-  Serial.begin(9600);
+  Serial.begin(115200);
 
 }
 
