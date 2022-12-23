@@ -8,8 +8,9 @@
 ## Data Flow:
    Data in ESP32 ----> Protobuf encoding (ESP32) -----> COBS encoding (ESP32) -----> COBS decoding (client) -----> Protobuf decoding (client)
 ## Statistics:
-  1. 9.97 logs/sec
+  1. 9.97 logs/sec (A log contains the information of all temperatures, currents, flag status, PWM width, etc.)
   2. 992.67 bytes/sec
   3. Overhead for COBS encoding = 2 bytes
   4. Actual size of message = 198 bytes
-  5. Size of log in drone V1 code = 61 bytes
+  5. Saize of data after protobuf and COBS encoding = 47 bytes
+  6. Size of log in drone V1 code = 61 bytes
