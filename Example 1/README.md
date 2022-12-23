@@ -7,4 +7,9 @@
    Reference: https://blog.mbedded.ninja/programming/serialization-formats/consistent-overhead-byte-stuffing-cobs/
 ## Data Flow:
    Data in ESP32 ----> Protobuf encoding (ESP32) -----> COBS encoding (ESP32) -----> COBS decoding (client) -----> Protobuf decoding (client)
-                                          
+## Statistics:
+  1. 9.97 logs/sec
+  2. 992.67 bytes/sec
+  3. Overhead for COBS encoding = 2 bytes
+  4. Actual size of message = 198 bytes
+  5. Size of log in drone V1 code = 61 bytes
