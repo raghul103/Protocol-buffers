@@ -7,7 +7,7 @@
    Reference: https://blog.mbedded.ninja/programming/serialization-formats/consistent-overhead-byte-stuffing-cobs/
 ## Data Flow:
    Data in ESP32 ----> Protobuf encoding (ESP32) -----> COBS encoding (ESP32) -----> COBS decoding (client) -----> Protobuf decoding (client)
-## Statistics:
+## Statistics: (Using Arduino UNO; baud rate = 9600)
   1. 9.97 logs/sec (A log contains the information of all temperatures, currents, flag status, PWM width, etc.)
   2. 992.67 bytes/sec
   3. Overhead for COBS encoding = 2 bytes
