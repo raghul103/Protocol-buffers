@@ -32,13 +32,11 @@ void setup() {
 
 void loop() {
 
- // i = 0;
   uint8_t buffer[100];
 
-  uint8_t bufferk[30];
-  uint8_t bufferm[30];
+  uint8_t buffer1[30];
+  uint8_t buffer2[30];
   
-  size_t msg_len;
   Data message = Data_init_zero;
  
 
@@ -76,15 +74,10 @@ void loop() {
 
   size_t encoded_size = encodeCOBS(buffer, stream.bytes_written, cobs_buffer, cobs_buffer_size, ADD_ZERO_BYTE);
   Serial.write(cobs_buffer, encoded_size);
- // delay(500);
    
   Temp1 = Temp1 + 0.01;
   Temp2 = Temp2 + 0.01;
-  // Curr1 = Curr1 + 0.002;
-  // Curr2 = Curr2 + 0.002;
-  // Curr3 = Curr3 + 0.002;
-  //BattVolt = BattVolt + 0.01;  
-
+   
   while(Serial.available())
   {
     bufferk[i] = Serial.read();
@@ -121,7 +114,7 @@ void loop() {
       size_t ENCODED_MESSAGE_SIZEm = getCOBSBufferSize(streams.bytes_written, ADD_ZERO_BYTE);
 
      // Allocate buffer big enough to hold result of COBS encoding.
-       uint8_t cobs_bufferm[ENCODED_MESSAGE_SIZEm] = {0};
+      uint8_t cobs_bufferm[ENCODED_MESSAGE_SIZEm] = {0};
       size_t cobs_buffer_sizem = sizeof(cobs_bufferm);
  
 
@@ -130,8 +123,7 @@ void loop() {
       Serial.write(cobs_bufferm, encoded_sizem); 
 
       flag = 0;   
-    
-  
+     
   }
 }
   
