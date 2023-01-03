@@ -12,5 +12,5 @@
   2. 992.67 bytes/sec
   3. Overhead for COBS encoding = 2 bytes
   4. Actual size of message = 198 bytes
-  5. Saize of data after protobuf and COBS encoding = 47 bytes
+  5. Size of data after protobuf and COBS encoding = 56 bytes
   6. Size of log in drone V1 code = 61 bytes
