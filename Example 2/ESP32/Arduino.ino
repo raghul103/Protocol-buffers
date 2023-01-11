@@ -1,3 +1,4 @@
+// Initializing necessary libraries
 #include "Arduino.pb.h" 
 #include "pb_common.h"
 #include "pb.h"
@@ -6,6 +7,7 @@
 #include"cobs.h"
 #include "pb_decode.h"
 
+// Initializing data log for sample testing
 float Temp1 = 23.69;
 float Temp2 = 23.85;
 float Curr1 = 0.07;
@@ -26,23 +28,26 @@ int i = 0, flag = 0;
 
 void setup() {
  
-  Serial.begin(9600);
+  Serial.begin(115200);
 
 }
 
 void loop() {
 
- // i = 0;
+  // Buffer for encoding data logs
   uint8_t buffer[100];
-
-  uint8_t bufferk[30];
-  uint8_t bufferm[30];
+  // Buffer for decoding command
+  uint8_t buffer1[30];
+ // command for encoding Acknowledgement
+  uint8_t buffer2[30];
   
   size_t msg_len;
   Data message = Data_init_zero;
  
 
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
+ 
+ // Assigning data log values
   message.Temp1 = Temp1;
   message.Temp2 = Temp2;
   message.Curr1 = Curr1;
@@ -58,7 +63,8 @@ void loop() {
   message.Hflag = Hflag;
   strcpy(message.user, user);
   message.Sflag = true;
-
+  
+ // Encoding Data logs
   bool status = pb_encode(&stream, Data_fields, &message);
 
   if (!status)
@@ -78,38 +84,43 @@ void loop() {
   Serial.write(cobs_buffer, encoded_size);
  // delay(500);
    
+  // Changing data log values for every iteration
   Temp1 = Temp1 + 0.01;
   Temp2 = Temp2 + 0.01;
-  // Curr1 = Curr1 + 0.002;
-  // Curr2 = Curr2 + 0.002;
-  // Curr3 = Curr3 + 0.002;
-  //BattVolt = BattVolt + 0.01;  
+  Curr1 = Curr1 + 0.002;
+  Curr2 = Curr2 + 0.002;
+  Curr3 = Curr3 + 0.002;
+  BattVolt = BattVolt + 0.01;  
 
-  while(Serial.available())
+  while(Serial.available())  // Reading the command from EC
   {
-    bufferk[i] = Serial.read();
+    buffer1[i] = Serial.read();
     i++;
     flag = 1;
     
     }
    
-  if(flag == 1){  
-    command messagek = command_init_zero;
-    pb_istream_t streamk = pb_istream_from_buffer(bufferk, sizeof(bufferk));
-    bool statusi = pb_decode(&streamk, command_fields, &messagek); 
+  if(flag == 1){  // If command is received
+    command message1 = command_init_zero;
+   
+   // Decode the command
+    pb_istream_t stream1 = pb_istream_from_buffer(buffer1, sizeof(buffer1));
+    bool statusi = pb_decode(&stream1, command_fields, &message1); 
 
-    commandAck messages = commandAck_init_zero;
-    if(messagek.commandtype != 0){
+    commandAck message2 = commandAck_init_zero;
+   // Set Acknowledgement
+    if(message1.commandtype != 0){
      
-     messages.statuss = 1;
+     message2.statuss = 1;
     }
 
     else{
-      messages.statuss = 0;
+      message2.statuss = 0;
     }
-
-     pb_ostream_t streams = pb_ostream_from_buffer(bufferm, sizeof(bufferm));
-     bool statuss = pb_encode(&streams, commandAck_fields, &messages);
+   
+   // Encode command Acknowledgement 
+     pb_ostream_t streams = pb_ostream_from_buffer(buffer2, sizeof(buffer2));
+     bool statuss = pb_encode(&streams, commandAck_fields, &message2);
      
       if (!statuss)
       {
@@ -117,19 +128,19 @@ void loop() {
       return;
       }
               
-      
-      size_t ENCODED_MESSAGE_SIZEm = getCOBSBufferSize(streams.bytes_written, ADD_ZERO_BYTE);
+      // Encode the protobuf encoded Acknowledgement again using COBS (This data should be COBS decoded and then protobuf decoded in pythn side)
+      size_t ENCODED_MESSAGE_SIZE2 = getCOBSBufferSize(streams.bytes_written, ADD_ZERO_BYTE);
 
      // Allocate buffer big enough to hold result of COBS encoding.
-       uint8_t cobs_bufferm[ENCODED_MESSAGE_SIZEm] = {0};
-      size_t cobs_buffer_sizem = sizeof(cobs_bufferm);
+       uint8_t cobs_buffer2[ENCODED_MESSAGE_SIZE2] = {0};
+      size_t cobs_buffer_size2 = sizeof(cobs_buffer2);
  
 
-      size_t encoded_sizem = encodeCOBS(bufferm, streams.bytes_written, cobs_bufferm, cobs_buffer_sizem, ADD_ZERO_BYTE);
+      size_t encoded_size2 = encodeCOBS(buffer2, streams.bytes_written, cobs_buffer2, cobs_buffer_size2, ADD_ZERO_BYTE);
 
-      Serial.write(cobs_bufferm, encoded_sizem); 
+      Serial.write(cobs_buffer2, encoded_size2); // Send the encoded Acknowledgement
 
-      flag = 0;   
+      flag = 0;   // Acknowledgement has been sent
     
   
   }
